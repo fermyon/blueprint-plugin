@@ -1,0 +1,67 @@
+spin_manifest_version = 2
+
+[application]
+name = "Test Spin TOML"
+version = "0.1.0"
+authors = ["Fermyon Engineering Team <engineering@fermyon.com>"]
+description = "This is a test spin.toml file used for testing the blueprint plugin."
+
+[application.trigger]
+http = {base = "/blueprint"}
+redis = {address = "redis://localhost:6379"}
+
+[variables]
+# Bare bones test
+test_var = {default = "test"}
+# Checks the secret field
+secret_var = {secret = true}
+# Checks that the default value can be overridden
+override_default_var = {default = "some_val"}
+# Checks that the error message shows up with a missing default config
+missing_default_var = {required = false}
+# Checks the error message shows for a missing variable that is required
+missing_required_var = {required = true}
+# Checks that the default variable works properly
+test_default_var = {default = "another_val"}
+
+[component.number-one]
+description = "This is a description for component 1."
+source = "component-one/main.wasm"
+allowed_outbound_hosts = ["https://localhost:3000", "postgres://localhost:5432"]
+key_value_stores = ["redis://localhost:6379"]
+ai_models = ["gpt4_wrapper"]
+sqlite_databases = ["default"]
+
+[component.number-one.variables]
+parsed_test_var = "This is the test_var: {{ test_var }}"
+parsed_secret_var = "This is the secret_var: {{ secret_var }}"
+parsed_optional_var = "This is the test_default_var: {{ test_default_var }}"
+
+[[trigger.http]]
+route = "/route-one/..."
+component = "number-one"
+executor = {type = "spin"}
+
+[component.number-two]
+source = {url = "https://ghcr.io/fermyon/component-number-two", digest = "thisisatestdigeststring"}
+
+[[trigger.redis]]
+address = "redis://anotherhost.io:6379"
+channel = "test-channel"
+component = "number-two"
+
+[[trigger.http]]
+route = { private = true }
+component = "number-two"
+executor = { type = "non-Spin executor" }
+
+[component.number-three]
+source = "component-three/main.wasm"
+
+[[trigger.random]]
+component = "number-three"
+
+[[trigger.redis]]
+channel = "root-channel"
+component = "number-three"
+
