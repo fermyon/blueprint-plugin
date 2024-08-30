@@ -24,6 +24,6 @@ var All bool
 func init() {
 	showCmd.PersistentFlags().StringP("file", "f", "", "Specifies the path to the spin.toml file you wish to visualize")
 	showCmd.PersistentFlags().StringP("env", "e", "", "Specifies the path to the \".env\" file containing your Spin variables")
-    showCmd.PersistentFlags().BoolVarP(&All, "all", "a", false, "Output information about all component. Only applies if no component name is specified.")
+	showCmd.PersistentFlags().BoolVarP(&All, "all", "a", false, "Output information about all component. Only applies if no component name is specified.")
 	rootCmd.AddCommand(showCmd)
 }
