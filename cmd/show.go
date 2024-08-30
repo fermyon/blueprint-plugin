@@ -20,7 +20,7 @@ var showCmd = &cobra.Command{
 	Long: `The "show" command reads a spin.toml file and prints a table of components to the terminal.
 You can optionally specify a component to display information for a specific component only.
 By default, the command looks for a "spin.toml" file in the current directory.`,
-	Args: cobra.MaximumNArgs(1),
+	Args: cobra.MaximumNArgs(2),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// The path to a "spin.toml" file
 		path, err := cmd.Flags().GetString("file")
@@ -58,6 +58,13 @@ By default, the command looks for a "spin.toml" file in the current directory.`,
 		if len(args) == 0 {
 			// This won't throw errors because we are not checking the validity of a "spin.toml" file
 			fmt.Print(showAllComponents(tomlData, envVars))
+
+            // Also print info about all components if --all flag is set
+            if All {
+                for name, _ := range tomlData.Component {
+                    fmt.Print(showSpecificComponent(tomlData, envVars, name))
+                }
+            }
 
 		} else {
 			terminalOutput, err := showSpecificComponent(tomlData, envVars, args[0])
