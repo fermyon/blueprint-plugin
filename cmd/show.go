@@ -59,6 +59,13 @@ By default, the command looks for a "spin.toml" file in the current directory.`,
 			// This won't throw errors because we are not checking the validity of a "spin.toml" file
 			fmt.Print(showAllComponents(tomlData, envVars))
 
+		// Also print info about all components if --all flag is set
+		if All {
+			for name, _ := range tomlData.Component {
+				fmt.Print(showSpecificComponent(tomlData, envVars, name))
+			}
+		}
+
 		} else {
 			terminalOutput, err := showSpecificComponent(tomlData, envVars, args[0])
 			if err != nil {
