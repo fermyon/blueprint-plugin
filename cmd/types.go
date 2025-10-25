@@ -93,7 +93,9 @@ func (t *Trigger) UnmarshalTOML(rawData any) error {
 				return err
 			}
 
-			decoder.Decode(value)
+			if err := decoder.Decode(value); err != nil {
+				return fmt.Errorf("failed to decode http trigger: %w", err)
+			}
 			t.HTTP = append(t.HTTP, httpTriggers...)
 		case "redis":
 			var redisTriggers []RedisTrigger
