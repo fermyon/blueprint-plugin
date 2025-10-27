@@ -59,12 +59,12 @@ By default, the command looks for a "spin.toml" file in the current directory.`,
 			// This won't throw errors because we are not checking the validity of a "spin.toml" file
 			fmt.Print(showAllComponents(tomlData, envVars))
 
-		// Also print info about all components if --all flag is set
-		if All {
-			for name, _ := range tomlData.Component {
-				fmt.Print(showSpecificComponent(tomlData, envVars, name))
+			// Also print info about all components if --all flag is set
+			if All {
+				for name := range tomlData.Component {
+					fmt.Print(showSpecificComponent(tomlData, envVars, name))
+				}
 			}
-		}
 
 		} else {
 			terminalOutput, err := showSpecificComponent(tomlData, envVars, args[0])
@@ -385,7 +385,11 @@ func parseEnvVars(filePath string) (map[string]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		defer file.Close()
+		defer func() {
+			if err := file.Close(); err != nil {
+				fmt.Fprintf(os.Stderr, "error closing file: %v\n", err)
+			}
+		}()
 
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
